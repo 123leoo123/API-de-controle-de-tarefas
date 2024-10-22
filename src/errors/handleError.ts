@@ -9,9 +9,11 @@ export class handleErrors {
         }
 
         if(error instanceof ZodError) {
-            return res.status(422).json(error);
+            const Error = {"errors": error.issues}
+            return res.status(400).json(Error);
         }
-        return res.status(500).json({ message: "Internal server error" });
+        console.log(error);
+        return res.status(500).json({ message: "Internal server error." });
     }
 }
 

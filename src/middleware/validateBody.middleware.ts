@@ -1,9 +1,9 @@
 import { NextFunction, Request, Response } from "express";
-import { Schema, ZodSchema } from "zod";
+import { ZodSchema } from "zod";
 
 export class validateBody {
-    static execute = (Schema: ZodSchema) => (req: Request, res: Response, next: NextFunction) => {
-        req.body = Schema.parse(req.body);
+    static execute = (Schema: ZodSchema) => async (req: Request, res: Response, next: NextFunction) => {
+        req.body = await Schema.parseAsync(req.body);
 
         return next();
     }

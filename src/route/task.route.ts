@@ -2,19 +2,19 @@ import { Router } from "express";
 import { TaskControllers } from "../controllers/task.controllers";
 import { isDuplicateTaksExist } from "../middleware/isDuplicateTaskExist.middleware";
 import { container } from "tsyringe";
-import { isCategoryExist } from "../middleware/isCategoryExist.middeware";
 import { validateBody } from "../middleware/validateBody.middleware";
-import { taskCreateResponse} from "../schema/task.schema";
 import { isTaskExist } from "../middleware/isTaskExist.middleware";
+import { taskCreate, taskUpdateSchema } from "../schema/task.schema";
+import { TaskServices } from "../services/task.services";
+import { isCategoryIdExist } from "../middleware/isCategoryExist.middeware";
 
-container.registerSingleton("taskControllers", TaskControllers);
+container.registerSingleton("TaskServices", TaskServices);
 const taskControllers = container.resolve(TaskControllers);
 
 export const taskRouter = Router();
 
-
-taskRouter.post("/task", validateBody.execute(taskCreateResponse), isCategoryExist.execute, isDuplicateTaksExist.execute, taskControllers.create);
-taskRouter.get("/task/:id", isTaskExist.execute, taskControllers.findOne);
-taskRouter.get("/task", taskControllers.findAll);
-taskRouter.update("/task/:id", isTaskExist.execute, taskControllers.update);
-taskRouter.delete("/task/:id", isTaskExist.execute, taskControllers.delete);
+taskRouter.post("/", validateBody.execute(taskCreate), isDuplicateTaksExist.execute, isCategoryIdExist.execute, (req, res) => taskControllers.create(req, res));
+taskRouter.get("/:id", isTaskExist.execute, (req, res) => taskControllers.findOne(req, res));
+taskRouter.get("/", (req, res) => taskControllers.findAll(req, res));
+taskRouter.patch("/:id", isTaskExist.execute, validateBody.execute(taskUpdateSchema), (req, res) =>  taskControllers.update(req, res));
+taskRouter.delete("/:id", isTaskExist.execute, (req, res) =>  taskControllers.delete(req, res));

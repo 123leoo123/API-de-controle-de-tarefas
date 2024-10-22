@@ -1,20 +1,24 @@
 import z from "zod";
+import { CategorySchema } from "./category.schema";
 
 export const TaskSchema = z.object({
     id: z.number().positive(),
     title: z.string(),
     content: z.string(),
     finished: z.boolean(),
-    categoryId: z.number().int()
-})
+    categoryId: z.number().int().nullish()
+});
 
-// refazer esta parte
-export const TaskSchemaAll = TaskSchema
+export const taskCreate = TaskSchema.omit({ id: true, finished: true })
 
-export const taskCreateResponse = TaskSchemaAll.omit({ id: true, finished: true })
-
-export type TaskCreateResponse = z.infer<typeof taskCreateResponse>
-// 
+export type TaskCreate = z.infer<typeof taskCreate>
 
 export type TTask = z.infer<typeof TaskSchema>;
 
+export const taskUpdateSchema = TaskSchema.omit({ id: true }).partial();
+
+export type TaskUpdate = z.infer<typeof taskUpdateSchema>;
+
+export const taskReturnSchema = TaskSchema.omit({ categoryId: true }).extend({ category: CategorySchema.nullish()});
+
+export type TaskReturn = z.infer<typeof taskReturnSchema>;

@@ -6,9 +6,9 @@ import { inject, injectable } from "tsyringe";
 export class CategoryControllers {
 
     constructor(
-        @inject("categoryServices")
-        private categoryServices: CategoryServices,
-    ) {}
+        @inject("CategoryServices")
+        private categoryServices: CategoryServices
+    ) {};
 
     async create(req: Request, res: Response) {
         const response = await this.categoryServices.create(req.body);
@@ -17,7 +17,7 @@ export class CategoryControllers {
     }
 
     async delete(req: Request, res: Response) {
-        await this.categoryServices.delete(req.body.id);
+        await this.categoryServices.delete(+req.params.id);
 
         return res.status(204).json();
     }

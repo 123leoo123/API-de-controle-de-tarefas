@@ -11,7 +11,7 @@ export class isDuplicateCategoryExist {
     if(categoryExist){
         throw new appError(401,"Category already exists");
     }
-    next();
+    return next();
     }
 }
 

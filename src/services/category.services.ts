@@ -6,12 +6,12 @@ import { prisma } from "../database/prisma";
 export class CategoryServices {
     async create(category: Category): Promise<Category> {
         
-        const data = await prisma.category.create({ data: category})
+        const data = await prisma.category.create({ data: category })
         
         return data;
     }
 
-    async delete(id: string): Promise<void> {
+    async delete(id: number): Promise<void> {
         await prisma.category.delete({ where: { id } });
     }
 }

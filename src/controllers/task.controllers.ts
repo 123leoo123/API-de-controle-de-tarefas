@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { TaskServices } from "../services/task.services";
 import { inject, injectable } from "tsyringe";
 
-
 @injectable()
 export class TaskControllers {
 
@@ -12,7 +11,9 @@ export class TaskControllers {
     ) {};
 
     async create(req: Request, res: Response) {
-        const response = await this.taskServices.create(req.body);
+        const userId = res.locals.decode.id;
+
+        const response = await this.taskServices.create(req.body, userId);
 
         return res.status(201).json(response);
     }
@@ -25,10 +26,12 @@ export class TaskControllers {
 
     async findAll(req: Request, res: Response) {
         const search = req.query.category as string;
-
-        const response = await this.taskServices.findAll(search);
-
+        const userId = res.locals.decode.id;
+        
+        const response = await this.taskServices.findAll(userId, search);
+        
         return res.status(200).json(response);
+        
     }
 
     async update(req: Request, res: Response) {

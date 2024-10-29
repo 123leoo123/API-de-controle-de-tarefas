@@ -4,8 +4,8 @@ import { TaskCreate, TaskReturn, taskReturnSchema, TaskUpdate, TTask } from "../
 
 @injectable()
 export class TaskServices {
-    async create(task: TaskCreate ): Promise<TTask> {
-        const data = await prisma.task.create({ data: task });
+    async create( task: TaskCreate, userId: string): Promise<TaskReturn> {
+        const data = await prisma.task.create({ data: {...task, userId: +userId} });
         
         return data;
     }
@@ -16,15 +16,17 @@ export class TaskServices {
         return taskReturnSchema.parse(data);
     }
 
-    async findAll(search?: string): Promise<TaskReturn[]> {
+    async findAll(userId: number, search: string): Promise<TaskReturn[]> {
+        
         if (search) {
-        const data = await prisma.task.findMany({ include: { category: true }, where: { category: {name: { contains: search, mode: "insensitive"}}}});
-
-        return taskReturnSchema.array().parse(data);
+            const data = await prisma.task.findMany({ include: { category: true }, 
+            where: { category: {name: { contains: search, mode: "insensitive"}}}});
+        
+            return taskReturnSchema.array().parse(data);
         }
 
-        const data = await prisma.task.findMany({ include: { category: true } });
-
+        const data = await prisma.task.findMany({ where: { userId }, include: { category: true } });
+        
         return taskReturnSchema.array().parse(data);
     }
 

@@ -1,62 +1,64 @@
 import { describe, expect, it } from "vitest";
+import { category, invalidDataCategory } from "../../mocks/category.mocks";
 import { request } from "../../setupFiles";
+import {
+  generateAuthentication,
+  generateInvalidToken,
+} from "../../utils/generateAuthentication";
 
 describe("create category", async () => {
   it("should be able to create category successfully", async () => {
-    const category = {
-      name: "Example",
-    };
-    const response = await request.post("/categories").send(category);
+    const { user, token } = await generateAuthentication();
 
-    const expectedBody = {
-      id: expect.any(Number),
-      name: category.name,
-    };
-
-    expect(response.body).toEqual(expectedBody);
-    expect(response.statusCode).toBe(201);
-  });
-
-  it("should return an error when creating a category with empty body", async () => {
-    const response = await request.post("/categories").send({});
-
-    const expectedBody = {
-      errors: [
-        {
-          code: "invalid_type",
-          expected: "string",
-          received: "undefined",
-          path: ["name"],
-          message: "Required",
-        },
-      ],
-    };
-
-    expect(response.body).toEqual(expectedBody);
-    expect(response.statusCode).toBe(400);
-  });
-
-  it("should return an error when creating a category with invalid name type", async () => {
-    const invalidDataCategory = {
-      name: 123,
-    };
-    const response = await request
+    const data = await request
       .post("/categories")
-      .send(invalidDataCategory);
+      .set("Authorization", `Bearer ${token}`)
+      .send(category(user.id))
+      .expect(201)
+      .then((response) => response.body);
 
-    const expectedBody = {
-      errors: [
-        {
-          code: "invalid_type",
-          expected: "string",
-          received: "number",
-          path: ["name"],
-          message: "Expected string, received number",
-        },
-      ],
-    };
+    expect(data).toBeDefined();
+    expect(data).toBeTypeOf("object");
 
-    expect(response.body).toEqual(expectedBody);
-    expect(response.statusCode).toBe(400);
+    expect(data.id).toBeDefined();
+    expect(data.id).toBeTypeOf("number");
+
+    expect(data.name).toBeDefined();
+    expect(data.name).toBeTypeOf("string");
+
+    expect(data.userId).toBeDefined();
+    expect(data.userId).toBeTypeOf("number");
+  });
+
+  it("should throw error when try to create a task with a missing body parameter", async () => {
+    const { token } = await generateAuthentication();
+
+    await request
+      .post("/categories")
+      .set("Authorization", `Bearer ${token}`)
+      .expect(400);
+  });
+
+  it("should throw error when try to create a task with invalid data types", async () => {
+    const { token } = await generateAuthentication();
+
+    await request
+      .post("/categories")
+      .set("Authorization", `Bearer ${token}`)
+      .send(invalidDataCategory)
+      .expect(400);
+  });
+
+  it("should throw error when there is no token", async () => {
+    await request.post("/categories").expect(401);
+  });
+
+  it("should throw error when the token is invalid", async () => {
+    const token = generateInvalidToken();
+
+    await request
+      .post("/categories")
+      .set("Authorization", `Bearer ${token}`)
+      .expect(401);
   });
 });

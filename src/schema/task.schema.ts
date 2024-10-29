@@ -6,10 +6,11 @@ export const TaskSchema = z.object({
     title: z.string(),
     content: z.string(),
     finished: z.boolean(),
+    userId: z.number().positive(),
     categoryId: z.number().int().nullish()
 });
 
-export const taskCreate = TaskSchema.omit({ id: true, finished: true })
+export const taskCreate = TaskSchema.omit({ id: true, finished: true, userId: true })
 
 export type TaskCreate = z.infer<typeof taskCreate>
 

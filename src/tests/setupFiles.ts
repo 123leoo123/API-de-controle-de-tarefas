@@ -7,6 +7,7 @@ export const request = supertest(app);
 
 beforeEach(async () => {
   await prisma.$transaction([
+    prisma.user.deleteMany(),
     prisma.category.deleteMany(),
     prisma.task.deleteMany(),
   ]);

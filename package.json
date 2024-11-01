@@ -8,7 +8,7 @@
   },
   "scripts": {
     "build": "npx tsc",
-    "start": "node src/server.js",
+    "start": "node dist/server.js",
     "dev": "dotenv -e ./.env.develop -- tsnd --respawn src/server.ts",
     "dbtest": "dotenv -e ./.env.test -- tsnd --respawn src/server.ts",
     "migrate:dev": "dotenv -e ./.env.develop -- npx prisma migrate dev",

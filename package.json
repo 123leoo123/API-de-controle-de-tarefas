@@ -7,14 +7,14 @@
     "node": "18"
   },
   "scripts": {
-    "biuld": "npx tsc",
+    "build": "npx tsc",
     "start": "node dist/server.js",
     "dev": "dotenv -e ./.env.develop -- tsnd --respawn src/server.ts",
     "dbtest": "dotenv -e ./.env.test -- tsnd --respawn src/server.ts",
     "migrate:dev": "dotenv -e ./.env.develop -- npx prisma migrate dev",
     "test": "dotenv -e ./.env.test -- vitest",
     "migrate:test": "dotenv -e ./.env.test -- npx prisma migrate dev",
-    "migrate:deploy": "dotenv -e ./.env.develop -- npx prisma migrate deploy"
+    "migrate:deploy": "npx prisma migrate deploy"
   },
   "keywords": [],
   "author": "",
